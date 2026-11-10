@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/data/
+public/notebooks/
+playwright-report/
+test-results/
+.DS_Store
+__pycache__/
