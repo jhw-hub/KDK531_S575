@@ -1,0 +1,4 @@
+# Optional CPython reference checks; learners need none of these locally.
+pandas>=2.2,<3
+matplotlib>=3.9,<4
+scikit-learn>=1.6,<2

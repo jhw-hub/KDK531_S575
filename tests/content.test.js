@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {sessions,lessons,byId,validateCurriculum} from '../src/curriculum.js';
+import {importPreview,exportProfile,fresh,lessonRecord,recordSuccess,skillLevel} from '../src/state.js';
+import {SHORT,DETAILS} from '../src/disclosures.js';
+test('24 source-mapped sessions have exercises',()=>{assert.deepEqual(validateCurriculum(),[]);assert.equal(sessions.K531.length,12);assert.equal(sessions.S575.length,12);assert.ok(lessons.length>=30)});
+test('coding exercises include distinct transfer behavioral checks',()=>{for(const l of lessons.filter(l=>l.type!=='interpret')){assert.ok(l.checks.length>=2);assert.ok(l.transferChecks.length>=2);assert.notEqual(l.prompt,l.transfer)}});
+test('all interpretations include distinct choice transfer and explanation',()=>{for(const l of lessons.filter(l=>l.type==='interpret')){assert.ok(l.options.length>=2);assert.ok(l.transferOptions.length>=2);assert.ok(l.reason);assert.notEqual(l.prompt,l.transfer)}});
+test('backup validates schema and preserves profile, while malformed rejected',()=>{const x=fresh('A');lessonRecord(x,'variables').draft='print(1)';const restored=importPreview(exportProfile(x));assert.equal(restored.lessons.variables.draft,'print(1)');assert.throws(()=>importPreview('{}'));assert.throws(()=>importPreview('{oops'))});
+test('assistance cannot create independent mastery',()=>{const p=fresh(),l=byId.variables,r=lessonRecord(p,l.id);recordSuccess(p,l,r,'write',true);assert.equal(skillLevel(r),'Practiced with assistance');assert.equal(r.independent.length,0)});
+test('upfront warnings and linked long notice content are populated',()=>{assert.ok(SHORT.useful&&SHORT.aware&&SHORT.data);assert.ok(DETAILS.length>=8)});
